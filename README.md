@@ -1,0 +1,1 @@
+# swearing-on-ai-meter
