@@ -1,0 +1,36 @@
+[package]
+name = "soaim"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.74"
+description = "Swearing on AI Meter — count swear words across your local AI-coding prompt history."
+license = "MIT"
+readme = "README.md"
+
+[[bin]]
+name = "soaim"
+path = "src/main.rs"
+
+[dependencies]
+ratatui = "0.29"
+crossterm = "0.28"
+rusqlite = { version = "0.32", features = ["bundled"] }
+clap = { version = "4", features = ["derive"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+chrono = { version = "0.4", features = ["clock"] }
+directories = "5"
+regex = "1"
+aho-corasick = "1"
+anyhow = "1"
+thiserror = "1"
+toml = "0.8"
+walkdir = "2"
+
+[dev-dependencies]
+tempfile = "3"
+
+[profile.release]
+strip = true
+lto = "thin"
+codegen-units = 1
