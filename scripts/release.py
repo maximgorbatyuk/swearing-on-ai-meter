@@ -160,10 +160,19 @@ def run_verify() -> None:
 
 
 def switch_branch(branch: str) -> None:
-    """Switch to a branch and pull latest from remote."""
+    """Switch to a branch and fast-forward it to the remote.
+
+    Uses an explicit fetch + ``git merge --ff-only origin/<branch>`` instead of
+    ``git pull``. ``git pull`` merges *every* FETCH_HEAD entry marked
+    "for-merge", so a stale FETCH_HEAD (e.g. left by an earlier pull of another
+    branch) can present multiple merge heads and abort with
+    "fatal: Cannot fast-forward to multiple branches." Merging the single named
+    remote-tracking ref is deterministic and immune to FETCH_HEAD contents.
+    """
     print(f"\n--- Switching to '{branch}' branch ---")
     run(["git", "checkout", branch])
-    run(["git", "pull", "--ff-only", "origin", branch])
+    run(["git", "fetch", "origin", branch])
+    run(["git", "merge", "--ff-only", f"origin/{branch}"])
 
 
 def update_version(version: str) -> None:
