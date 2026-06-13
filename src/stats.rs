@@ -104,6 +104,9 @@ pub struct Dashboard {
     pub weekday: [PerSource; 7], // Mon..Sun
     /// Grand total over the window, per source.
     pub window_total: PerSource,
+    /// Per-app swear totals over the last 14 days, computed regardless of the
+    /// active filter — drives the per-agent comparison chart.
+    pub agents_14d: PerSource,
 }
 
 impl Dashboard {
@@ -241,6 +244,20 @@ pub fn dashboard(conn: &Connection, window: Window, filter: AppFilter) -> Result
         }
     }
 
+    // --- per-agent totals over the last 14 days (for the comparison chart) ---
+    // Intentionally NOT filtered: the chart always compares all five apps.
+    let agents_start = (today_local - chrono::Duration::days(13))
+        .format("%Y-%m-%d")
+        .to_string();
+    let mut agents_14d: PerSource = [0; N_SOURCES];
+    for (src, c) in grouped_by_source(
+        conn,
+        "strftime('%Y-%m-%d', created_at, 'unixepoch', 'localtime') >= ?1",
+        &agents_start,
+    )? {
+        agents_14d[src.index()] = c;
+    }
+
     Ok(Dashboard {
         window,
         filter,
@@ -249,6 +266,7 @@ pub fn dashboard(conn: &Connection, window: Window, filter: AppFilter) -> Result
         hourly,
         weekday,
         window_total,
+        agents_14d,
     })
 }
 

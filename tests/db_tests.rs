@@ -46,10 +46,18 @@ fn stats_aggregate_today_and_window() {
         "2 + 1 + 3 over the window"
     );
 
+    // The last-14-days per-agent series covers the 5-day-old opencode prompt.
+    assert_eq!(dash.agents_14d[Source::ClaudeCode.index()], 2);
+    assert_eq!(dash.agents_14d[Source::CodexCli.index()], 1);
+    assert_eq!(dash.agents_14d[Source::Opencode.index()], 3);
+
     // Single-app filter restricts to one source.
     let only_claude =
         stats::dashboard(&db.conn, Window::D30, AppFilter::One(Source::ClaudeCode)).unwrap();
     assert_eq!(only_claude.window_total.iter().sum::<u32>(), 2);
+    // ...but the per-agent comparison ignores the filter (still all apps).
+    assert_eq!(only_claude.agents_14d[Source::CodexCli.index()], 1);
+    assert_eq!(only_claude.agents_14d[Source::Opencode.index()], 3);
 }
 
 /// Full pipeline: ingest is incremental and idempotent.

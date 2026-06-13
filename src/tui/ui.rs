@@ -1,5 +1,5 @@
-//! Dashboard layout and rendering: counter/header, heatmap, the two bar
-//! charts, and the filter + menu footer.
+//! Dashboard layout and rendering: the SOAIM banner, the activity heatmap, the
+//! per-agent (last 14 days) comparison, and the filter + menu footer.
 
 use ratatui::layout::{Constraint, Layout, Rect};
 use ratatui::style::{Color, Style, Stylize};
@@ -8,55 +8,51 @@ use ratatui::widgets::{Block, Paragraph};
 use ratatui::Frame;
 
 use super::app::App;
-use super::widgets::{heatmap, hour, source_color, weekday};
+use super::widgets::{agents, heatmap, source_color};
 use crate::model::Source;
 use crate::stats::AppFilter;
 
+/// Figlet-style "SOAIM" banner. Lines are padded to a common width in
+/// `render_banner` so each centers to the same column.
+const LOGO: &str = r#" ____   ___    _    ___ __  __
+/ ___| / _ \  / \  |_ _|  \/  |
+\___ \| | | |/ _ \  | || |\/| |
+ ___) | |_| / ___ \ | || |  | |
+|____/ \___/_/   \_\___|_|  |_|"#;
+
+const SUBTITLE: &str = "Know how many times you say *** to your agent";
+const REPO: &str = "https://github.com/maximgorbatyuk/swearing-on-ai-meter";
+
 pub fn render(frame: &mut Frame, app: &App) {
     let chunks = Layout::vertical([
-        Constraint::Length(3),  // today / header
-        Constraint::Length(10), // heatmap (7 weekday rows + legend + borders)
-        Constraint::Min(8),     // hour + weekday charts
+        Constraint::Length(8),  // SOAIM logo + subtitle + repo link
+        Constraint::Length(12), // activity heatmap
+        Constraint::Min(7),     // per-agent comparison (last 14 days)
         Constraint::Length(4),  // filter row + menu
     ])
     .split(frame.area());
 
-    render_header(frame, chunks[0], app);
+    render_banner(frame, chunks[0]);
     render_heatmap(frame, chunks[1], app);
-    render_charts(frame, chunks[2], app);
+    render_agents(frame, chunks[2], app);
     render_footer(frame, chunks[3], app);
 }
 
-fn render_header(frame: &mut Frame, area: Rect, app: &App) {
-    let block = Block::bordered()
-        .title(Line::from(" Swearing on AI Meter ").left_aligned())
-        .title(
-            Line::from(format!(
-                "window: {}  filter: {} ",
-                app.window.label(),
-                app.filter.label()
-            ))
-            .right_aligned(),
-        );
-    let inner = block.inner(area);
-    frame.render_widget(block, area);
+fn render_banner(frame: &mut Frame, area: Rect) {
+    let accent = Style::new().fg(Color::Rgb(217, 119, 87)).bold();
+    let subtitle_style = Style::new().fg(Color::Rgb(150, 150, 150)).italic();
+    let repo_style = Style::new().fg(Color::Rgb(110, 168, 254)).underlined();
 
-    let t = &app.dash.today;
-    let mut spans = vec![
-        Span::styled(format!("TODAY: {}", t.total()), Style::new().bold()),
-        Span::raw("   ("),
-    ];
-    for (idx, src) in Source::ALL.iter().enumerate() {
-        if idx > 0 {
-            spans.push(Span::raw(" · "));
-        }
-        spans.push(Span::styled(
-            format!("{} {}", src.short(), t.per_source[src.index()]),
-            Style::new().fg(source_color(*src)),
-        ));
-    }
-    spans.push(Span::raw(")"));
-    frame.render_widget(Paragraph::new(Line::from(spans)), inner);
+    let width = LOGO.lines().map(|l| l.chars().count()).max().unwrap_or(0);
+    let mut lines: Vec<Line> = LOGO
+        .lines()
+        .map(|l| Line::from(Span::styled(format!("{l:<width$}"), accent)).centered())
+        .collect();
+    lines.push(Line::from(""));
+    lines.push(Line::from(Span::styled(SUBTITLE, subtitle_style)).centered());
+    lines.push(Line::from(Span::styled(REPO, repo_style)).centered());
+
+    frame.render_widget(Paragraph::new(lines), area);
 }
 
 fn render_heatmap(frame: &mut Frame, area: Rect, app: &App) {
@@ -67,19 +63,11 @@ fn render_heatmap(frame: &mut Frame, area: Rect, app: &App) {
     heatmap::render(frame.buffer_mut(), inner, &app.dash);
 }
 
-fn render_charts(frame: &mut Frame, area: Rect, app: &App) {
-    let cols =
-        Layout::horizontal([Constraint::Percentage(55), Constraint::Percentage(45)]).split(area);
-
-    let hour_block = Block::bordered().title(" Per hour (0–23) ");
-    let hour_inner = hour_block.inner(cols[0]);
-    frame.render_widget(hour_block, cols[0]);
-    hour::render(frame.buffer_mut(), hour_inner, &app.dash);
-
-    let wd_block = Block::bordered().title(" Per weekday (Mon–Sun) ");
-    let wd_inner = wd_block.inner(cols[1]);
-    frame.render_widget(wd_block, cols[1]);
-    weekday::render(frame.buffer_mut(), wd_inner, &app.dash);
+fn render_agents(frame: &mut Frame, area: Rect, app: &App) {
+    let block = Block::bordered().title(" Last 14 days · per agent ");
+    let inner = block.inner(area);
+    frame.render_widget(block, area);
+    agents::render(frame.buffer_mut(), inner, &app.dash);
 }
 
 fn render_footer(frame: &mut Frame, area: Rect, app: &App) {
