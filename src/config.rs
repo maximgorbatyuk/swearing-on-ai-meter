@@ -18,6 +18,8 @@ pub struct Config {
     pub paths: SourcePaths,
     /// Resolved path to soaim's own SQLite database.
     pub db_path: PathBuf,
+    /// Resolved path to the TOML config file (opened by `[s] settings` in the TUI).
+    pub config_path: PathBuf,
 }
 
 /// One resolved root per source.
@@ -118,6 +120,7 @@ impl Config {
             swears,
             paths,
             db_path,
+            config_path,
         })
     }
 

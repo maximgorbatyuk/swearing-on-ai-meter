@@ -17,6 +17,7 @@ pub fn empty_config(db_path: PathBuf) -> Config {
             opencode: PathBuf::from("/nonexistent/opencode.db"),
         },
         db_path,
+        config_path: PathBuf::from("/nonexistent/config.toml"),
     }
 }
 

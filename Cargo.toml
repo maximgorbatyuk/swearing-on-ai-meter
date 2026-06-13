@@ -6,6 +6,15 @@ rust-version = "1.74"
 description = "Swearing on AI Meter — count swear words across your local AI-coding prompt history."
 license = "MIT"
 readme = "README.md"
+repository = "https://github.com/maximgorbatyuk/swearing-on-ai-meter"
+homepage = "https://github.com/maximgorbatyuk/swearing-on-ai-meter"
+authors = ["Maxim Gorbatyuk"]
+
+[package.metadata.wix]
+upgrade-guid = "534C7184-E964-442E-93E7-C009B7D96826"
+path-guid = "CB742043-755A-40C3-B151-11B8BA8559A7"
+license = false
+eula = false
 
 [[bin]]
 name = "soaim"
@@ -34,3 +43,8 @@ tempfile = "3"
 strip = true
 lto = "thin"
 codegen-units = 1
+
+# The profile that 'dist' will build with
+[profile.dist]
+inherits = "release"
+lto = "thin"

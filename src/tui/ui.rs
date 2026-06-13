@@ -105,6 +105,8 @@ fn render_footer(frame: &mut Frame, area: Rect, app: &App) {
         Span::raw(" 30d  "),
         Span::styled("[r]", Style::new().bold()),
         Span::raw(" refresh  "),
+        Span::styled("[s]", Style::new().bold()),
+        Span::raw(" settings  "),
         Span::styled("[q]", Style::new().bold()),
         Span::raw(" quit"),
     ]);
