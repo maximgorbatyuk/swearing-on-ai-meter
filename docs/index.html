@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>soaim — Count how often you swear at your AI agents.</title>
+  <meta name="description" content="Swearing on AI Meter (soaim) is an offline, read-only Rust CLI/TUI that scans your local AI-coding prompt history across Claude Code, Claude Desktop, Codex CLI, Codex App, and opencode, counts swear words, and charts them per app.">
+  <meta name="keywords" content="soaim, swearing on ai meter, ai prompt analytics, swear counter, rust cli, terminal ui, tui, claude code, codex cli, opencode, developer tools, offline, read-only, homebrew, open source">
+  <meta name="author" content="Maxim Gorbatyuk">
+  <meta name="robots" content="index, follow">
+  <meta property="og:site_name" content="soaim">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:title" content="soaim — Count how often you swear at your AI agents.">
+  <meta property="og:description" content="An offline, read-only Rust CLI/TUI that counts how often you swear at your AI coding agents, broken down per app, with a live terminal dashboard.">
+  <meta property="og:url" content="https://maximgorbatyuk.github.io/swearing-on-ai-meter/">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://maximgorbatyuk.github.io/swearing-on-ai-meter/og.svg">
+  <meta property="og:image:alt" content="soaim — Count how often you swear at your AI agents.">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="soaim — Count how often you swear at your AI agents.">
+  <meta name="twitter:description" content="An offline, read-only Rust CLI/TUI that counts how often you swear at your AI coding agents, broken down per app, with a live terminal dashboard.">
+  <meta name="twitter:image" content="https://maximgorbatyuk.github.io/swearing-on-ai-meter/og.svg">
+  <link rel="canonical" href="https://maximgorbatyuk.github.io/swearing-on-ai-meter/">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src https://api.github.com;">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90' font-family='monospace' fill='%2322c55e'>S</text></svg>">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "soaim",
+    "alternateName": "Swearing on AI Meter",
+    "description": "An offline, read-only Rust CLI/TUI that scans your local AI-coding prompt history across Claude Code, Claude Desktop, Codex CLI, Codex App, and opencode, counts swear words, and charts them per app.",
+    "applicationCategory": "DeveloperApplication",
+    "operatingSystem": "macOS, Linux, Windows",
+    "url": "https://maximgorbatyuk.github.io/swearing-on-ai-meter/",
+    "downloadUrl": "https://github.com/maximgorbatyuk/swearing-on-ai-meter/releases",
+    "license": "https://opensource.org/licenses/MIT",
+    "author": {
+      "@type": "Person",
+      "name": "maximgorbatyuk",
+      "url": "https://github.com/maximgorbatyuk"
+    },
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "sourceCodeRepository": "https://github.com/maximgorbatyuk/swearing-on-ai-meter",
+    "programmingLanguage": "Rust",
+    "keywords": ["swearing on ai meter", "soaim", "ai prompt analytics", "swear counter", "rust cli", "terminal ui", "offline", "read-only", "claude code", "codex cli", "opencode"]
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What is soaim?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "soaim (Swearing on AI Meter) is an offline, read-only Rust CLI/TUI that scans your local AI-coding prompt history across five apps — Claude Code, Claude Desktop, Codex CLI, Codex App, and opencode — counts swear words, and shows them per app in a live terminal dashboard."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Does soaim send my prompts anywhere?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "No. soaim runs fully offline and read-only. It only reads your own prompts from each tool's local on-disk history, never reads agent replies, never makes a network call, and never writes to any tool's files."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Which AI tools does soaim support?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Claude Code, Codex CLI, and opencode are read by default. Claude Desktop and Codex App are best-effort and stay off until you point soaim at their store — run 'soaim discover' to locate it."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I install soaim?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "On macOS, tap and install via Homebrew: brew tap maximgorbatyuk/tap then brew install soaim. Or build from source with a recent stable Rust toolchain: cargo build --release."
+        }
+      }
+    ]
+  }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap"></noscript>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <a href="#main" class="skip-link">Skip to main content</a>
+
+  <!-- Hero -->
+  <header class="hero" id="top">
+    <div class="container">
+      <pre class="hero-logo" role="img" aria-label="soaim">                     _
+  ___   ___    __ _ (_) _ __ ___
+ / __| / _ \  / _` || || '_ ` _ \
+ \__ \| (_) || (_| || || | | | | |
+ |___/ \___/  \__,_||_||_| |_| |_|</pre>
+      <h1><span class="typing-cursor" data-typing="Count how often you swear at your AI agents.">Count how often you swear at your AI agents.</span></h1>
+      <p class="hero-description">
+        <strong>Swearing on AI Meter</strong> scans your local AI-coding prompt history, counts the swears, and charts them per app.<br>
+        Fully offline. Read-only. Five apps. One terminal dashboard.
+      </p>
+      <div class="hero-ctas">
+        <a href="#install" class="btn btn-primary">$ brew install soaim</a>
+        <a href="https://github.com/maximgorbatyuk/swearing-on-ai-meter" class="btn btn-secondary" target="_blank" rel="noopener">View on GitHub &rarr;</a>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+
+    <!-- Active development -->
+    <section>
+      <div class="container">
+        <h2 class="section-title">In active development</h2>
+        <p class="section-subtitle">Latest release activity from GitHub.</p>
+        <div class="terminal-window animate-on-scroll">
+          <div class="terminal-header" aria-hidden="true">
+            <span class="dot red"></span>
+            <span class="dot yellow"></span>
+            <span class="dot green"></span>
+            <span class="terminal-title">GitHub Releases</span>
+          </div>
+          <div class="terminal-body">
+            <pre id="release-status-content">Loading latest release info...</pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- What it does -->
+    <section class="section-green">
+      <div class="container">
+        <h2 class="section-title">What soaim does</h2>
+        <p class="section-subtitle">One job: tell you how often you cuss at your coding agents.</p>
+        <div class="features-grid">
+          <div class="feature-card animate-on-scroll">
+            <div class="feature-icon" aria-hidden="true">[#@!]</div>
+            <h3>Counts your swears</h3>
+            <p>Whole-word, case-insensitive matching over your own prompts. Every occurrence counts — a prompt with two swears counts two. The word list is configurable.</p>
+          </div>
+          <div class="feature-card animate-on-scroll">
+            <div class="feature-icon" aria-hidden="true">[%]</div>
+            <h3>Per-app breakdown</h3>
+            <p>Every statistic is split across five apps with fixed colors, so you can see whether Claude Code or Codex gets the worst of your temper.</p>
+          </div>
+          <div class="feature-card animate-on-scroll">
+            <div class="feature-icon" aria-hidden="true">[~/]</div>
+            <h3>100% offline &amp; read-only</h3>
+            <p>It only reads your local prompt history. No network calls, no telemetry, and it never writes to any tool's files. Results cache in its own SQLite database.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Your meter at a glance -->
+    <section>
+      <div class="container">
+        <h2 class="section-title">Your meter, at a glance</h2>
+        <p class="section-subtitle">A sample window — your real numbers live in the terminal.</p>
+        <div class="stat-row">
+          <div class="stat-callout animate-on-scroll">
+            <div class="stat-number">27</div>
+            <div class="stat-label">swears today</div>
+          </div>
+          <div class="stat-callout animate-on-scroll">
+            <div class="stat-number">612</div>
+            <div class="stat-label">swears in the last 30 days</div>
+          </div>
+          <div class="stat-callout animate-on-scroll">
+            <div class="stat-number">5</div>
+            <div class="stat-label">apps tracked</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Example output -->
+    <section class="section-green">
+      <div class="container">
+        <h2 class="section-title">Example output</h2>
+        <p class="section-subtitle">Quick text commands, or the full interactive dashboard.</p>
+        <div class="usage-examples">
+
+          <div>
+            <p class="usage-label">Today's count, with a per-app breakdown</p>
+            <div class="terminal-window animate-on-scroll">
+              <div class="terminal-header" aria-hidden="true">
+                <span class="dot red"></span>
+                <span class="dot yellow"></span>
+                <span class="dot green"></span>
+                <span class="terminal-title">Terminal</span>
+              </div>
+              <div class="terminal-body">
+<pre><span class="prompt">$</span> soaim today
+
+Today — 27 swears across 4 apps
+
+  <span class="c-claude">Claude Code</span>      14  <span class="c-claude">████████████</span>
+  <span class="c-codex">Codex CLI</span>         7  <span class="c-codex">██████</span>
+  <span class="c-opencode">opencode</span>          5  <span class="c-opencode">████</span>
+  <span class="c-desktop">Claude Desktop</span>    1  <span class="c-desktop">█</span>
+  <span class="c-codexapp">Codex App</span>         0</pre>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <p class="usage-label">Window aggregates as plain text (no TUI)</p>
+            <div class="terminal-window animate-on-scroll">
+              <div class="terminal-header" aria-hidden="true">
+                <span class="dot red"></span>
+                <span class="dot yellow"></span>
+                <span class="dot green"></span>
+                <span class="terminal-title">Terminal</span>
+              </div>
+              <div class="terminal-body">
+<pre><span class="prompt">$</span> soaim stats <span class="flag">--days</span> 30
+
+Window: last 30 days (local time)
+Total swears: 612        Prompts scanned: 4,981
+
+Per app
+  <span class="c-claude">Claude Code</span>     341
+  <span class="c-codex">Codex CLI</span>       158
+  <span class="c-opencode">opencode</span>         92
+  <span class="c-desktop">Claude Desktop</span>   21
+  <span class="c-codexapp">Codex App</span>         0
+
+Busiest hour:    15:00–16:00   (78 swears)
+Busiest weekday: Wednesday     (121 swears)
+Top word:        "f***"        (404)</pre>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <p class="usage-label">The interactive dashboard — <code>soaim</code> with no arguments</p>
+            <div class="terminal-window animate-on-scroll">
+              <div class="terminal-header" aria-hidden="true">
+                <span class="dot red"></span>
+                <span class="dot yellow"></span>
+                <span class="dot green"></span>
+                <span class="terminal-title">soaim — dashboard</span>
+              </div>
+              <div class="terminal-body">
+<pre> soaim · swearing on ai meter            <span class="c-muted">window: 30d   filter: all</span>
+
+ Today  <span class="c-claude">27</span>   │ <span class="c-claude">claude 14</span> · <span class="c-codex">codex 7</span> · <span class="c-opencode">opencode 5</span> · <span class="c-desktop">desktop 1</span> · <span class="c-codexapp">codex-app 0</span>
+
+ Daily heatmap (last 30 days)
+   Mon  <span class="c-muted">▓ ░ ▒ █ ▓ ░ ▒ ▓ ░ █ ▒ ░ ▓ █</span>
+   Wed  <span class="c-muted">░ ▒ █ ▓ ░ ▒ ▓ █ ░ ▒ ▓ ░ █ ▒</span>
+   Fri  <span class="c-muted">▒ ░ ▓ ░ █ ▒ ░ ▓ ▒ ░ █ ▓ ░ ▒</span>
+        <span class="c-muted">less ░▒▓█ more</span>
+
+ By hour                       By weekday
+  00 <span class="c-codex">▁</span>                          Mon <span class="c-claude">███</span><span class="c-codex">▆</span>
+  06 <span class="c-claude">▂</span>                          Tue <span class="c-claude">████</span><span class="c-codex">▇</span>
+  09 <span class="c-claude">▅</span>                          Wed <span class="c-claude">█████</span>
+  12 <span class="c-claude">▆</span>                          Thu <span class="c-claude">███</span><span class="c-opencode">▆</span>
+  15 <span class="c-claude">█</span>  <span class="c-warn">← peak</span>                Fri <span class="c-claude">████</span>
+  18 <span class="c-claude">▇</span>                          Sat <span class="c-opencode">▃</span>
+  21 <span class="c-codex">▄</span>                          Sun <span class="c-codex">▂</span>
+
+ <span class="c-muted">[9/0] 90/360d   [a] all   [1-5] per app   [r] refresh   [q] quit</span></pre>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- Supported agents -->
+    <section>
+      <div class="container">
+        <h2 class="section-title">Supported agents</h2>
+        <p class="section-subtitle">Five sources. Three read by default; two best-effort until you point soaim at them.</p>
+        <div class="features-grid">
+          <div class="feature-card animate-on-scroll">
+            <div class="feature-icon" aria-hidden="true">[cc]</div>
+            <h3>Claude Code</h3>
+            <p><code>~/.claude/projects/**/*.jsonl</code><br>JSONL prompt log, read directly.</p>
+            <span class="agent-status">Implemented</span>
+          </div>
+          <div class="feature-card animate-on-scroll">
+            <div class="feature-icon" aria-hidden="true">[cx]</div>
+            <h3>Codex CLI</h3>
+            <p><code>~/.codex/history.jsonl</code> + rollouts<br>JSONL history and session records.</p>
+            <span class="agent-status">Implemented</span>
+          </div>
+          <div class="feature-card animate-on-scroll">
+            <div class="feature-icon" aria-hidden="true">[oc]</div>
+            <h3>opencode</h3>
+            <p><code>~/.local/share/opencode/opencode.db</code><br>SQLite, opened strictly read-only.</p>
+            <span class="agent-status">Implemented</span>
+          </div>
+          <div class="feature-card animate-on-scroll">
+            <div class="feature-icon" aria-hidden="true">[cd]</div>
+            <h3>Claude Desktop</h3>
+            <p><code>~/Library/Application Support/Claude</code><br>Best-effort JSONL scan — run <code>soaim discover</code> to locate the store.</p>
+            <span class="agent-status best-effort">Best-effort</span>
+          </div>
+          <div class="feature-card animate-on-scroll">
+            <div class="feature-icon" aria-hidden="true">[ca]</div>
+            <h3>Codex App</h3>
+            <p><code>~/Library/Application Support/Codex</code><br>Best-effort JSONL scan — run <code>soaim discover</code> to locate the store.</p>
+            <span class="agent-status best-effort">Best-effort</span>
+          </div>
+          <div class="feature-card animate-on-scroll">
+            <div class="feature-icon" aria-hidden="true">[+]</div>
+            <h3>Bring your own</h3>
+            <p>Override any source path in <code>config.toml</code> or via <code>--config</code>. A missing tool simply contributes zero — the rest keep working.</p>
+            <span class="agent-status">Configurable</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Installation -->
+    <section id="install" class="section-green">
+      <div class="container">
+        <h2 class="section-title">Installation</h2>
+        <p class="section-subtitle">Two ways to get started.</p>
+        <div class="install-grid">
+          <div>
+            <p class="install-label">Homebrew (macOS)</p>
+            <div class="terminal-window animate-on-scroll">
+              <div class="terminal-header" aria-hidden="true">
+                <span class="dot red"></span>
+                <span class="dot yellow"></span>
+                <span class="dot green"></span>
+                <span class="terminal-title">Terminal</span>
+              </div>
+              <div class="terminal-body">
+<pre><span class="prompt">$</span> brew tap maximgorbatyuk/tap
+<span class="prompt">$</span> brew install soaim
+
+<span class="comment"># Ingest prompts, then open the dashboard</span>
+<span class="prompt">$</span> soaim</pre>
+              </div>
+            </div>
+          </div>
+          <div>
+            <p class="install-label">Build from source (cross-platform)</p>
+            <div class="terminal-window animate-on-scroll">
+              <div class="terminal-header" aria-hidden="true">
+                <span class="dot red"></span>
+                <span class="dot yellow"></span>
+                <span class="dot green"></span>
+                <span class="terminal-title">Terminal</span>
+              </div>
+              <div class="terminal-body">
+<pre><span class="comment"># Requires a recent stable Rust toolchain (1.74+)</span>
+<span class="prompt">$</span> cargo build <span class="flag">--release</span>
+<span class="prompt">$</span> ./target/release/soaim</pre>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p class="install-note">macOS, Linux, and Windows. SQLite is compiled in — no system dependency.</p>
+      </div>
+    </section>
+
+    <!-- See it in action -->
+    <section>
+      <div class="container">
+        <h2 class="section-title">See it in action</h2>
+        <p class="section-subtitle">From first run to today's tally.</p>
+        <div class="terminal-window animate-on-scroll">
+          <div class="terminal-header" aria-hidden="true">
+            <span class="dot red"></span>
+            <span class="dot yellow"></span>
+            <span class="dot green"></span>
+            <span class="terminal-title">Terminal</span>
+          </div>
+          <div class="terminal-body">
+<pre><span class="prompt">$</span> soaim path
+sources:
+  <span class="c-claude">claude</span>     ~/.claude/projects
+  <span class="c-codex">codex</span>      ~/.codex
+  <span class="c-opencode">opencode</span>   ~/.local/share/opencode/opencode.db
+database:  ~/.local/share/soaim/soaim.db
+
+<span class="prompt">$</span> soaim ingest
+Scanned 4,981 prompts · 612 new swears analyzed · done in 0.4s
+
+<span class="prompt">$</span> soaim today
+Today — 27 swears across 4 apps
+
+<span class="comment"># Launch the live dashboard</span>
+<span class="prompt">$</span> soaim</pre>
+          </div>
+        </div>
+        <div class="hero-ctas cta-center">
+          <a href="https://github.com/maximgorbatyuk/swearing-on-ai-meter" class="btn btn-secondary" target="_blank" rel="noopener">Star on GitHub &rarr;</a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="footer-columns">
+        <div>
+          <pre class="footer-logo" role="img" aria-label="soaim">                     _
+  ___   ___    __ _ (_) _ __ ___
+ / __| / _ \  / _` || || '_ ` _ \
+ \__ \| (_) || (_| || || | | | | |
+ |___/ \___/  \__,_||_||_| |_| |_|</pre>
+          <p class="footer-slogan">Count how often you swear at your AI agents.</p>
+          <p>Offline, read-only, no fuss.</p>
+        </div>
+        <div>
+          <h3 class="footer-col-title">Our projects</h3>
+          <ul>
+            <li><a href="https://repolyze.app/">Repolyze</a></li>
+            <li><a href="https://databasecli.app/">databasecli.app</a></li>
+            <li><a href="https://techinterview.space/">techinterview.space</a></li>
+            <li><a href="https://evchargetracker.app/">EV Charge Tracker (iOS)</a></li>
+            <li><a href="https://mgorbatyuk.dev/journey-wallet/">Journey Wallet (iOS)</a></li>
+            <li><a href="https://mgorbatyuk.dev/creativity-hub/">Creativity Hub (iOS)</a></li>
+            <li><a href="https://mgorbatyuk.dev/slothy-terminal/">Slothy Terminal (macOS)</a></li>
+          </ul>
+        </div>
+        <div>
+          <h3 class="footer-col-title">GitHub</h3>
+          <ul>
+            <li><a href="https://github.com/maximgorbatyuk/swearing-on-ai-meter/blob/main/LICENSE" target="_blank" rel="noopener">MIT License</a></li>
+            <li><a href="https://github.com/maximgorbatyuk/swearing-on-ai-meter/blob/main/PRIVACY-POLICY.md" target="_blank" rel="noopener">Privacy Policy</a></li>
+            <li><a href="https://github.com/maximgorbatyuk/swearing-on-ai-meter/issues" target="_blank" rel="noopener">Issues</a></li>
+            <li><a href="https://github.com/maximgorbatyuk/swearing-on-ai-meter/releases" target="_blank" rel="noopener">Releases</a></li>
+          </ul>
+        </div>
+      </div>
+      <hr>
+      <p class="footer-credit">Made with <span class="footer-heart" aria-hidden="true">&#9829;</span> and plenty of coffee breaks by <a href="https://mgorbatyuk.dev" target="_blank" rel="noopener">Maxim Gorbatyuk</a></p>
+      <p class="back-to-top-wrap"><a href="#top" class="back-to-top">^ top</a></p>
+    </div>
+  </footer>
+
+  <script src="script.js" defer></script>
+
+</body>
+</html>

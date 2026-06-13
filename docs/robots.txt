@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://maximgorbatyuk.github.io/swearing-on-ai-meter/sitemap.xml
