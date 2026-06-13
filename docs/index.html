@@ -24,7 +24,7 @@
   <meta name="twitter:image" content="https://maximgorbatyuk.github.io/swearing-on-ai-meter/og.svg">
   <link rel="canonical" href="https://maximgorbatyuk.github.io/swearing-on-ai-meter/">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src https://api.github.com;">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90' font-family='monospace' fill='%2322c55e'>S</text></svg>">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90' font-family='monospace' fill='%236366f1'>S</text></svg>">
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -105,16 +105,8 @@
   <!-- Hero -->
   <header class="hero" id="top">
     <div class="container">
-      <pre class="hero-logo" role="img" aria-label="soaim">                     _
-  ___   ___    __ _ (_) _ __ ___
- / __| / _ \  / _` || || '_ ` _ \
- \__ \| (_) || (_| || || | | | | |
- |___/ \___/  \__,_||_||_| |_| |_|</pre>
       <h1><span class="typing-cursor" data-typing="Count how often you swear at your AI agents.">Count how often you swear at your AI agents.</span></h1>
-      <p class="hero-description">
-        <strong>Swearing on AI Meter</strong> scans your local AI-coding prompt history, counts the swears, and charts them per app.<br>
-        Fully offline. Read-only. Five apps. One terminal dashboard.
-      </p>
+      <p class="hero-description">Offline, read-only. Five apps. One terminal dashboard.</p>
       <div class="hero-ctas">
         <a href="#install" class="btn btn-primary">$ brew install soaim</a>
         <a href="https://github.com/maximgorbatyuk/swearing-on-ai-meter" class="btn btn-secondary" target="_blank" rel="noopener">View on GitHub &rarr;</a>
@@ -124,165 +116,72 @@
 
   <main id="main">
 
-    <!-- Active development -->
-    <section>
+    <!-- TUI dashboard replica -->
+    <section class="tui-section">
       <div class="container">
-        <h2 class="section-title">In active development</h2>
-        <p class="section-subtitle">Latest release activity from GitHub.</p>
-        <div class="terminal-window animate-on-scroll">
-          <div class="terminal-header" aria-hidden="true">
-            <span class="dot red"></span>
-            <span class="dot yellow"></span>
-            <span class="dot green"></span>
-            <span class="terminal-title">GitHub Releases</span>
-          </div>
-          <div class="terminal-body">
-            <pre id="release-status-content">Loading latest release info...</pre>
-          </div>
-        </div>
-      </div>
-    </section>
+        <div class="tui">
+          <div class="tui-panels">
 
-    <!-- What it does -->
-    <section class="section-green">
-      <div class="container">
-        <h2 class="section-title">What soaim does</h2>
-        <p class="section-subtitle">One job: tell you how often you cuss at your coding agents.</p>
-        <div class="features-grid">
-          <div class="feature-card animate-on-scroll">
-            <div class="feature-icon" aria-hidden="true">[#@!]</div>
-            <h3>Counts your swears</h3>
-            <p>Whole-word, case-insensitive matching over your own prompts. Every occurrence counts — a prompt with two swears counts two. The word list is configurable.</p>
-          </div>
-          <div class="feature-card animate-on-scroll">
-            <div class="feature-icon" aria-hidden="true">[%]</div>
-            <h3>Per-app breakdown</h3>
-            <p>Every statistic is split across five apps with fixed colors, so you can see whether Claude Code or Codex gets the worst of your temper.</p>
-          </div>
-          <div class="feature-card animate-on-scroll">
-            <div class="feature-icon" aria-hidden="true">[~/]</div>
-            <h3>100% offline &amp; read-only</h3>
-            <p>It only reads your local prompt history. No network calls, no telemetry, and it never writes to any tool's files. Results cache in its own SQLite database.</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Your meter at a glance -->
-    <section>
-      <div class="container">
-        <h2 class="section-title">Your meter, at a glance</h2>
-        <p class="section-subtitle">A sample window — your real numbers live in the terminal.</p>
-        <div class="stat-row">
-          <div class="stat-callout animate-on-scroll">
-            <div class="stat-number">27</div>
-            <div class="stat-label">swears today</div>
-          </div>
-          <div class="stat-callout animate-on-scroll">
-            <div class="stat-number">612</div>
-            <div class="stat-label">swears in the last 30 days</div>
-          </div>
-          <div class="stat-callout animate-on-scroll">
-            <div class="stat-number">5</div>
-            <div class="stat-label">apps tracked</div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Example output -->
-    <section class="section-green">
-      <div class="container">
-        <h2 class="section-title">Example output</h2>
-        <p class="section-subtitle">Quick text commands, or the full interactive dashboard.</p>
-        <div class="usage-examples">
-
-          <div>
-            <p class="usage-label">Today's count, with a per-app breakdown</p>
-            <div class="terminal-window animate-on-scroll">
-              <div class="terminal-header" aria-hidden="true">
-                <span class="dot red"></span>
-                <span class="dot yellow"></span>
-                <span class="dot green"></span>
-                <span class="terminal-title">Terminal</span>
-              </div>
-              <div class="terminal-body">
-<pre><span class="prompt">$</span> soaim today
-
-Today — 27 swears across 4 apps
-
-  <span class="c-claude">Claude Code</span>      14  <span class="c-claude">████████████</span>
-  <span class="c-codex">Codex CLI</span>         7  <span class="c-codex">██████</span>
-  <span class="c-opencode">opencode</span>          5  <span class="c-opencode">████</span>
-  <span class="c-desktop">Claude Desktop</span>    1  <span class="c-desktop">█</span>
-  <span class="c-codexapp">Codex App</span>         0</pre>
+            <div class="tui-panel">
+              <span class="tui-panel-title">Last 30 days (per day)</span>
+              <div class="tui-range">2026-05-15 .. 2026-06-13</div>
+              <div class="hm" aria-hidden="true">
+                <div class="hm-months"><span>May</span><span>Jun</span></div>
+                <div class="hm-row"><span class="hm-day">Mon</span><span class="hm-cell hm-2"></span><span class="hm-cell hm-0"></span><span class="hm-cell hm-3"></span><span class="hm-cell hm-2"></span><span class="hm-cell hm-1"></span><span class="hm-cell hm-2"></span><span class="hm-cell hm-1"></span></div>
+                <div class="hm-row"><span class="hm-day"></span><span class="hm-cell hm-0"></span><span class="hm-cell hm-2"></span><span class="hm-cell hm-3"></span><span class="hm-cell hm-1"></span><span class="hm-cell hm-3"></span><span class="hm-cell hm-1"></span><span class="hm-cell hm-0"></span></div>
+                <div class="hm-row"><span class="hm-day">Wed</span><span class="hm-cell hm-1"></span><span class="hm-cell hm-2"></span><span class="hm-cell hm-2"></span><span class="hm-cell hm-3"></span><span class="hm-cell hm-1"></span><span class="hm-cell hm-2"></span><span class="hm-cell hm-2"></span></div>
+                <div class="hm-row"><span class="hm-day"></span><span class="hm-cell hm-2"></span><span class="hm-cell hm-3"></span><span class="hm-cell hm-1"></span><span class="hm-cell hm-2"></span><span class="hm-cell hm-2"></span><span class="hm-cell hm-1"></span><span class="hm-cell hm-3"></span></div>
+                <div class="hm-row"><span class="hm-day">Fri</span><span class="hm-cell hm-3"></span><span class="hm-cell hm-2"></span><span class="hm-cell hm-3"></span><span class="hm-cell hm-1"></span><span class="hm-cell hm-2"></span><span class="hm-cell hm-1"></span><span class="hm-cell hm-1"></span></div>
+                <div class="hm-row"><span class="hm-day"></span><span class="hm-cell hm-0"></span><span class="hm-cell hm-1"></span><span class="hm-cell hm-1"></span><span class="hm-cell hm-2"></span><span class="hm-cell hm-1"></span><span class="hm-cell hm-0"></span><span class="hm-cell hm-1"></span></div>
+                <div class="hm-row"><span class="hm-day">Sun</span><span class="hm-cell hm-1"></span><span class="hm-cell hm-4"></span><span class="hm-cell hm-1"></span><span class="hm-cell hm-1"></span><span class="hm-cell hm-0"></span><span class="hm-cell hm-1"></span><span class="hm-cell hm-0"></span></div>
+                <div class="hm-legend"><span class="hm-cell hm-0"></span>0<span class="hm-cell hm-1"></span>1<span class="hm-cell hm-2"></span>2<span class="hm-cell hm-3"></span>3<span class="hm-cell hm-4"></span>4+</div>
               </div>
             </div>
-          </div>
 
-          <div>
-            <p class="usage-label">Window aggregates as plain text (no TUI)</p>
-            <div class="terminal-window animate-on-scroll">
-              <div class="terminal-header" aria-hidden="true">
-                <span class="dot red"></span>
-                <span class="dot yellow"></span>
-                <span class="dot green"></span>
-                <span class="terminal-title">Terminal</span>
+            <div class="tui-panel">
+              <span class="tui-panel-title">Last 14 days &middot; per agent</span>
+              <div class="tui-agent">
+                <span class="tui-agent-name">claude</span>
+                <span class="tui-bar"><span class="tui-fill claude"></span></span>
+                <span class="tui-agent-val val-coral">132</span>
               </div>
-              <div class="terminal-body">
-<pre><span class="prompt">$</span> soaim stats <span class="flag">--days</span> 30
-
-Window: last 30 days (local time)
-Total swears: 612        Prompts scanned: 4,981
-
-Per app
-  <span class="c-claude">Claude Code</span>     341
-  <span class="c-codex">Codex CLI</span>       158
-  <span class="c-opencode">opencode</span>         92
-  <span class="c-desktop">Claude Desktop</span>   21
-  <span class="c-codexapp">Codex App</span>         0
-
-Busiest hour:    15:00–16:00   (78 swears)
-Busiest weekday: Wednesday     (121 swears)
-Top word:        "f***"        (404)</pre>
+              <div class="tui-agent">
+                <span class="tui-agent-name">desktop</span>
+                <span class="tui-bar"><span class="tui-fill desktop"></span></span>
+                <span class="tui-agent-val val-purple">5</span>
               </div>
-            </div>
-          </div>
-
-          <div>
-            <p class="usage-label">The interactive dashboard — <code>soaim</code> with no arguments</p>
-            <div class="terminal-window animate-on-scroll">
-              <div class="terminal-header" aria-hidden="true">
-                <span class="dot red"></span>
-                <span class="dot yellow"></span>
-                <span class="dot green"></span>
-                <span class="terminal-title">soaim — dashboard</span>
+              <div class="tui-agent">
+                <span class="tui-agent-name">codex</span>
+                <span class="tui-bar"></span>
+                <span class="tui-agent-val val-zero">0</span>
               </div>
-              <div class="terminal-body">
-<pre> soaim · swearing on ai meter            <span class="c-muted">window: 30d   filter: all</span>
-
- Today  <span class="c-claude">27</span>   │ <span class="c-claude">claude 14</span> · <span class="c-codex">codex 7</span> · <span class="c-opencode">opencode 5</span> · <span class="c-desktop">desktop 1</span> · <span class="c-codexapp">codex-app 0</span>
-
- Daily heatmap (last 30 days)
-   Mon  <span class="c-muted">▓ ░ ▒ █ ▓ ░ ▒ ▓ ░ █ ▒ ░ ▓ █</span>
-   Wed  <span class="c-muted">░ ▒ █ ▓ ░ ▒ ▓ █ ░ ▒ ▓ ░ █ ▒</span>
-   Fri  <span class="c-muted">▒ ░ ▓ ░ █ ▒ ░ ▓ ▒ ░ █ ▓ ░ ▒</span>
-        <span class="c-muted">less ░▒▓█ more</span>
-
- By hour                       By weekday
-  00 <span class="c-codex">▁</span>                          Mon <span class="c-claude">███</span><span class="c-codex">▆</span>
-  06 <span class="c-claude">▂</span>                          Tue <span class="c-claude">████</span><span class="c-codex">▇</span>
-  09 <span class="c-claude">▅</span>                          Wed <span class="c-claude">█████</span>
-  12 <span class="c-claude">▆</span>                          Thu <span class="c-claude">███</span><span class="c-opencode">▆</span>
-  15 <span class="c-claude">█</span>  <span class="c-warn">← peak</span>                Fri <span class="c-claude">████</span>
-  18 <span class="c-claude">▇</span>                          Sat <span class="c-opencode">▃</span>
-  21 <span class="c-codex">▄</span>                          Sun <span class="c-codex">▂</span>
-
- <span class="c-muted">[9/0] 90/360d   [a] all   [1-5] per app   [r] refresh   [q] quit</span></pre>
+              <div class="tui-agent">
+                <span class="tui-agent-name">codex-app</span>
+                <span class="tui-bar"></span>
+                <span class="tui-agent-val val-zero">0</span>
+              </div>
+              <div class="tui-agent">
+                <span class="tui-agent-name">opencode</span>
+                <span class="tui-bar"><span class="tui-fill opencode"></span></span>
+                <span class="tui-agent-val val-gold">1</span>
               </div>
             </div>
+
           </div>
 
+          <div class="tui-keys">
+            <span class="k-label">apps:</span>
+            <span class="k-all">[a]ll</span>
+            <span>[1]claude</span>
+            <span class="k-desktop">[2]desktop</span>
+            <span class="k-codex">[3]codex</span>
+            <span>[4]codex-app</span>
+            <span class="k-opencode">[5]opencode</span>
+            <span class="k-sep">[d]30 [9]90 [0]360</span>
+            <span>[r]refresh [s]settings [q]quit</span>
+          </div>
+
+          <a class="tui-link" href="https://github.com/maximgorbatyuk/swearing-on-ai-meter" target="_blank" rel="noopener">https://github.com/maximgorbatyuk/swearing-on-ai-meter</a>
         </div>
       </div>
     </section>
@@ -334,7 +233,7 @@ Top word:        "f***"        (404)</pre>
     </section>
 
     <!-- Installation -->
-    <section id="install" class="section-green">
+    <section id="install" class="section-alt">
       <div class="container">
         <h2 class="section-title">Installation</h2>
         <p class="section-subtitle">Two ways to get started.</p>
@@ -349,9 +248,7 @@ Top word:        "f***"        (404)</pre>
                 <span class="terminal-title">Terminal</span>
               </div>
               <div class="terminal-body">
-<pre><span class="prompt">$</span> brew tap maximgorbatyuk/tap
-<span class="prompt">$</span> brew install soaim
-
+<pre><span class="prompt">$</span> brew install maximgorbatyuk/tap/soaim
 <span class="comment"># Ingest prompts, then open the dashboard</span>
 <span class="prompt">$</span> soaim</pre>
               </div>
@@ -378,38 +275,21 @@ Top word:        "f***"        (404)</pre>
       </div>
     </section>
 
-    <!-- See it in action -->
+    <!-- Active development -->
     <section>
       <div class="container">
-        <h2 class="section-title">See it in action</h2>
-        <p class="section-subtitle">From first run to today's tally.</p>
+        <h2 class="section-title">In active development</h2>
+        <p class="section-subtitle">Latest release activity from GitHub.</p>
         <div class="terminal-window animate-on-scroll">
           <div class="terminal-header" aria-hidden="true">
             <span class="dot red"></span>
             <span class="dot yellow"></span>
             <span class="dot green"></span>
-            <span class="terminal-title">Terminal</span>
+            <span class="terminal-title">GitHub Releases</span>
           </div>
           <div class="terminal-body">
-<pre><span class="prompt">$</span> soaim path
-sources:
-  <span class="c-claude">claude</span>     ~/.claude/projects
-  <span class="c-codex">codex</span>      ~/.codex
-  <span class="c-opencode">opencode</span>   ~/.local/share/opencode/opencode.db
-database:  ~/.local/share/soaim/soaim.db
-
-<span class="prompt">$</span> soaim ingest
-Scanned 4,981 prompts · 612 new swears analyzed · done in 0.4s
-
-<span class="prompt">$</span> soaim today
-Today — 27 swears across 4 apps
-
-<span class="comment"># Launch the live dashboard</span>
-<span class="prompt">$</span> soaim</pre>
+            <pre id="release-status-content">Loading latest release info...</pre>
           </div>
-        </div>
-        <div class="hero-ctas cta-center">
-          <a href="https://github.com/maximgorbatyuk/swearing-on-ai-meter" class="btn btn-secondary" target="_blank" rel="noopener">Star on GitHub &rarr;</a>
         </div>
       </div>
     </section>
