@@ -24,9 +24,12 @@ brew install maximgorbatyuk/tap/soaim
 soaim
 ```
 
-## License
+## Docs
 
-MIT — see `LICENSE`.
+- [How it works](docs/how-it-works.md)
+- [Agents analysis](docs/agents-analysis.md)
+- [Release](docs/release.md)
+- [Agents](AGENTS.md)
 
 ## Contributing
 
@@ -34,9 +37,6 @@ See [AGENTS.md](AGENTS.md) for guidance on how to contribute to this project.
 If you have any feature requests or bug reports, 
 please open an issue or feel free to submit a pull request.
 
-## Docs
+## License
 
-- [How it works](docs/how-it-works.md)
-- [Agents analysis](docs/agents-analysis.md)
-- [Release](docs/release.md)
-- [Agents](AGENTS.md)
+MIT — see `LICENSE`.
